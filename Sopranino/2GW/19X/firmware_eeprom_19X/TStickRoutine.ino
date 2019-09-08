@@ -91,12 +91,11 @@ void TStickRoutine() {
     deltat = ((NowQuat - lastUpdateQuat)/1000000.0f); // set integration time by time elapsed since last filter update
     lastUpdateQuat = NowQuat;
     //MadgwickQuaternionUpdate(outAccel[0], outAccel[1], outAccel[2], outGyro[0]*PI/180.0f, outGyro[1]*PI/180.0f, outGyro[2]*PI/180.0f, outMag[0], outMag[1], outMag[2]);
+    static Quaternion quat = Quaternion::Identity();
+    quat = filter.fuse(reading.gyro, reading.accl, reading.magn);
   
     OSCMessage msg8("/orientation");
-    msg8.add(q[0]);
-    msg8.add(q[1]);
-    msg8.add(q[2]);
-    msg8.add(q[3]);
+    addFloatArrayToMessage(quat.coeffs().data(), quat.coeffs().size(), msg8);
     bundle.add(msg8);
   
     oscEndpoint.beginPacket(oscEndpointIP, oscEndpointPORT);

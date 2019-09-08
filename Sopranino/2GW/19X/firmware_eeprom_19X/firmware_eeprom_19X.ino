@@ -87,6 +87,7 @@
 #include <SPI.h>
 
 #include <MIMU_LSM9DS1.h>
+#include <MIMUFusion.h>
 #include <Adafruit_Sensor.h> // https://github.com/adafruit/Adafruit_Sensor
 
 
@@ -144,6 +145,7 @@ char one[3] = "1";
 //////////////////////////
 
 MIMU_LSM9DS1 mimu{}; // use default SDA and SCL as per board library macros
+MIMUFusionFilter filter{};
 
 float deltat = 0.0f;        // integration interval for both filter schemes
 uint32_t lastUpdate = 0;    // used to calculate integration interval
@@ -256,6 +258,7 @@ void setup() {
 
   //initIMU();
   mimu.setup();
+  filter.setup();
 
   initCapsense();
 
