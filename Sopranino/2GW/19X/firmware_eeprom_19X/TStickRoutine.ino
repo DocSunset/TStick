@@ -26,8 +26,8 @@ boolean readTouch(){
   return changed;
 }
 
-void addFloatArrayToMessage(const float * v, int size, OSCMessage& m) {
-  for (; v < v+size; ++v) m.add(*v);
+void addFloatArrayToMessage(const float * const v, int size, OSCMessage& m) {
+  for (int i = 0; i < size; ++i) m.add(*(v+i));
 }
 
 void TStickRoutine() {
