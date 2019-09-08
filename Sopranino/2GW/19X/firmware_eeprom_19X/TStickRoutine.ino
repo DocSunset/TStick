@@ -45,24 +45,6 @@ void TStickRoutine() {
     
     static MIMUReading reading = MIMUReading::Zero();
     mimu.readInto(reading);
-    //lsm.read();  /* ask it to read in the data */ 
-    
-    /* Get a new sensor event */ 
-    sensors_event_t a, m, g, temp;
-    //lsm.getEvent(&a, &m, &g, &temp); 
-    
-    outAccel[0] = a.acceleration.x / 9.80665F;
-    outAccel[1] = a.acceleration.y / 9.80665F;
-    outAccel[2] = a.acceleration.z / 9.80665F;
-    
-    outMag[0] = m.magnetic.x;
-    outMag[1] = m.magnetic.y;
-    outMag[2] = m.magnetic.z;
-    
-    outGyro[0] = g.gyro.x;
-    outGyro[1] = g.gyro.y;
-    outGyro[2] = g.gyro.z;
-    
     
     OSCMessage msg2("/rawgyro");
     addFloatArrayToMessage(reading.gyro.data(), reading.gyro.size(), msg2);
@@ -108,7 +90,7 @@ void TStickRoutine() {
     NowQuat = micros();
     deltat = ((NowQuat - lastUpdateQuat)/1000000.0f); // set integration time by time elapsed since last filter update
     lastUpdateQuat = NowQuat;
-    MadgwickQuaternionUpdate(outAccel[0], outAccel[1], outAccel[2], outGyro[0]*PI/180.0f, outGyro[1]*PI/180.0f, outGyro[2]*PI/180.0f, outMag[0], outMag[1], outMag[2]);
+    //MadgwickQuaternionUpdate(outAccel[0], outAccel[1], outAccel[2], outGyro[0]*PI/180.0f, outGyro[1]*PI/180.0f, outGyro[2]*PI/180.0f, outMag[0], outMag[1], outMag[2]);
   
     OSCMessage msg8("/orientation");
     msg8.add(q[0]);

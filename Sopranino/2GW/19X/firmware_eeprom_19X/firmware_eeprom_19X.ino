@@ -37,7 +37,7 @@
 // esp32 board library (add url to preferences; install via board manager)
 // esp8266 board library (add url to preferences; install via board manager)
 // Wifimanager https://github.com/edumeneses/WiFi32Manager
-// Adafruit_LSM9DS1 (library manager)
+// SparkfunLSM9DS1 https://github.com/sparkfun/SparkFun_LSM9DS1_Arduino_Library/
 // ArduinoJSON (library manager - need version 5.13.5; 6.x will not work)
 // OSC - https://github.com/CNMAT/OSC (library manager)
 
@@ -87,7 +87,6 @@
 #include <SPI.h>
 
 #include <MIMU_LSM9DS1.h>
-//#include <Adafruit_LSM9DS1.h> // https://github.com/adafruit/Adafruit_LSM9DS1
 #include <Adafruit_Sensor.h> // https://github.com/adafruit/Adafruit_Sensor
 
 
@@ -144,8 +143,6 @@ char one[3] = "1";
 // LSM9DS1 Library Init //
 //////////////////////////
 
-// Adafruit library
-//Adafruit_LSM9DS1 lsm = Adafruit_LSM9DS1();
 MIMU_LSM9DS1 mimu{}; // use default SDA and SCL as per board library macros
 
 float deltat = 0.0f;        // integration interval for both filter schemes
@@ -153,9 +150,6 @@ uint32_t lastUpdate = 0;    // used to calculate integration interval
 uint32_t Now = 0;           // used to calculate integration interval
 float q[4] = {1.0f, 0.0f, 0.0f, 0.0f};    // vector to hold quaternion
 float pitch, yaw, roll, heading;
-float outAccel[3] = {0, 0, 0};
-float outGyro[3] = {0, 0, 0};
-float outMag[3] = {0, 0, 0};
 
 uint32_t lastUpdateQuat = 0;    // used to calculate integration interval
 uint32_t NowQuat = 0;           // used to calculate integration interval
