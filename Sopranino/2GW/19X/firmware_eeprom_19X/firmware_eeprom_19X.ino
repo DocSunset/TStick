@@ -43,7 +43,7 @@
 
 //  OBS:
 //  1-) Use esp32 1.0.1 or newer (https://github.com/espressif/arduino-esp32/releases)
-//  2-) For esp32 1.0.2 ESP32 has problems saving SSID. Follow instructions: https://github.com/edumeneses/WiFi32Manager
+//  2-) For esp32 1.0.1+ ESP32 has problems saving SSID. Follow instructions under Troubleshooting here: https://github.com/edumeneses/WiFi32Manager
 //  2-) Also install ESP8266 board library even if you'll use the ESP32 (https://github.com/esp8266/Arduino)
 //  3-) Some used library doesn't allow the creation of functions with "setup" in the name
 //  4-) Board currently in use: LOLIN D32 PRO
