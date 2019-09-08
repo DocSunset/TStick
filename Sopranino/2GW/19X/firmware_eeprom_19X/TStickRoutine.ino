@@ -26,6 +26,9 @@ boolean readTouch(){
   return changed;
 }
 
+void addFloatArrayToMessage(const float * v, int size, OSCMessage& m) {
+  for (; v < v+size; ++v) m.add(*v);
+}
 
 void TStickRoutine() {
   if (sendOSC) {
@@ -40,11 +43,13 @@ void TStickRoutine() {
       }
     }
     
-    lsm.read();  /* ask it to read in the data */ 
+    static MIMUReading reading = MIMUReading::Zero();
+    mimu.readInto(reading);
+    //lsm.read();  /* ask it to read in the data */ 
     
     /* Get a new sensor event */ 
     sensors_event_t a, m, g, temp;
-    lsm.getEvent(&a, &m, &g, &temp); 
+    //lsm.getEvent(&a, &m, &g, &temp); 
     
     outAccel[0] = a.acceleration.x / 9.80665F;
     outAccel[1] = a.acceleration.y / 9.80665F;
@@ -60,21 +65,15 @@ void TStickRoutine() {
     
     
     OSCMessage msg2("/rawgyro");
-    msg2.add(outGyro[0]);
-    msg2.add(outGyro[1]);
-    msg2.add(outGyro[2]);
+    addFloatArrayToMessage(reading.gyro.data(), reading.gyro.size(), msg2);
     bundle.add(msg2);
     
     OSCMessage msg3("/rawaccel");
-    msg3.add(outAccel[0]);
-    msg3.add(outAccel[1]);
-    msg3.add(outAccel[2]);
+    addFloatArrayToMessage(reading.accl.data(), reading.accl.size(), msg3);
     bundle.add(msg3);
     
     OSCMessage msg4("/rawmag");
-    msg4.add(outMag[0]);
-    msg4.add(outMag[1]);
-    msg4.add(outMag[2]);
+    addFloatArrayToMessage(reading.magn.data(), reading.magn.size(), msg4);
     bundle.add(msg4);
     
     int pressure = analogRead(pressurePin);
@@ -101,20 +100,9 @@ void TStickRoutine() {
     deltaTransferRate = millis();
   
     OSCMessage msg7("/raw");
-    msg7.add(outAccel[0]);
-    msg7.add(outAccel[1]);
-    msg7.add(outAccel[2]);
-    msg7.add(outGyro[0]);
-    msg7.add(outGyro[1]);
-    msg7.add(outGyro[2]);
-    msg7.add(outMag[0]);
-    msg7.add(outMag[1]);
-    msg7.add(outMag[2]);
-    msg7.add(millis()/1000.0f);
-    oscEndpoint.beginPacket(oscEndpointIP, oscEndpointPORT);
-    msg7.send(oscEndpoint);
-    oscEndpoint.endPacket();
-    msg7.empty();
+    reading.updateBuffer();
+    addFloatArrayToMessage(reading.data, reading.size, msg7);
+    bundle.add(msg7);
   
     // quaternion update and coordinate rotation
     NowQuat = micros();

@@ -85,7 +85,9 @@
 #include <OSCBundle.h>
 
 #include <SPI.h>
-#include <Adafruit_LSM9DS1.h> // https://github.com/adafruit/Adafruit_LSM9DS1
+
+#include <MIMU_LSM9DS1.h>
+//#include <Adafruit_LSM9DS1.h> // https://github.com/adafruit/Adafruit_LSM9DS1
 #include <Adafruit_Sensor.h> // https://github.com/adafruit/Adafruit_Sensor
 
 
@@ -143,7 +145,8 @@ char one[3] = "1";
 //////////////////////////
 
 // Adafruit library
-Adafruit_LSM9DS1 lsm = Adafruit_LSM9DS1();
+//Adafruit_LSM9DS1 lsm = Adafruit_LSM9DS1();
+MIMU_LSM9DS1 mimu{}; // use default SDA and SCL as per board library macros
 
 float deltat = 0.0f;        // integration interval for both filter schemes
 uint32_t lastUpdate = 0;    // used to calculate integration interval
@@ -257,7 +260,8 @@ void setup() {
   WiFi.setHostname(device);
   #endif
 
-  initIMU();
+  //initIMU();
+  mimu.setup();
 
   initCapsense();
 
