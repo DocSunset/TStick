@@ -44,7 +44,12 @@ void TStickRoutine() {
     }
     
     static MIMUReading reading = MIMUReading::Zero();
-    mimu.readInto(reading);
+    static Quaternion quat = Quaternion::Identity();
+    if (mimu.readInto(reading)) 
+    {
+      calibrator.calibrate(reading);
+      reading.updateBuffer();
+      quat = filter.fuse(reading.gyro, reading.accl, reading.magn);
     
     OSCMessage msg2("/rawgyro");
     addFloatArrayToMessage(reading.gyro.data(), reading.gyro.size(), msg2);
@@ -57,6 +62,17 @@ void TStickRoutine() {
     OSCMessage msg4("/rawmag");
     addFloatArrayToMessage(reading.magn.data(), reading.magn.size(), msg4);
     bundle.add(msg4);
+    
+  
+    OSCMessage msg7("/raw");
+    addFloatArrayToMessage(reading.data, reading.size, msg7);
+    bundle.add(msg7);
+    
+    OSCMessage msg8("/orientation");
+    addFloatArrayToMessage(quat.coeffs().data(), quat.coeffs().size(), msg8);
+    bundle.add(msg8);
+    
+    }
     
     int pressure = analogRead(pressurePin);
     if (calibrate == 1) {
@@ -81,22 +97,12 @@ void TStickRoutine() {
     msg6.empty();
     deltaTransferRate = millis();
   
-    OSCMessage msg7("/raw");
-    reading.updateBuffer();
-    addFloatArrayToMessage(reading.data, reading.size, msg7);
-    bundle.add(msg7);
-  
     // quaternion update and coordinate rotation
     NowQuat = micros();
     deltat = ((NowQuat - lastUpdateQuat)/1000000.0f); // set integration time by time elapsed since last filter update
     lastUpdateQuat = NowQuat;
     //MadgwickQuaternionUpdate(outAccel[0], outAccel[1], outAccel[2], outGyro[0]*PI/180.0f, outGyro[1]*PI/180.0f, outGyro[2]*PI/180.0f, outMag[0], outMag[1], outMag[2]);
-    static Quaternion quat = Quaternion::Identity();
-    quat = filter.fuse(reading.gyro, reading.accl, reading.magn);
   
-    OSCMessage msg8("/orientation");
-    addFloatArrayToMessage(quat.coeffs().data(), quat.coeffs().size(), msg8);
-    bundle.add(msg8);
   
     oscEndpoint.beginPacket(oscEndpointIP, oscEndpointPORT);
     bundle.send(oscEndpoint);
