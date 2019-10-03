@@ -87,6 +87,7 @@
 #include <SPI.h>
 
 #include <MIMU_LSM9DS1.h>
+#include <MIMUCalibrator.h>
 #include <MIMUFusion.h>
 #include <Adafruit_Sensor.h> // https://github.com/adafruit/Adafruit_Sensor
 
@@ -145,6 +146,7 @@ char one[3] = "1";
 //////////////////////////
 
 MIMU_LSM9DS1 mimu{}; // use default SDA and SCL as per board library macros
+MIMUCalibrator calibrator{};
 MIMUFusionFilter filter{};
 
 float deltat = 0.0f;        // integration interval for both filter schemes
@@ -258,6 +260,17 @@ void setup() {
 
   //initIMU();
   mimu.setup();
+  calibrator.cc = MIMUCalibrationConstants{}; // reset calibration
+//calibrator.cc.abias << -365.7554378704616, 54.40377950285871, 723.7232055947644;
+//calibrator.cc.acclcalibration << 6.109367094398712e-05, -4.012594683582845e-08, -1.833140650959718e-07, 0.0, 6.125253819620261e-05, 3.4861964464770923e-09, 0.0, 0.0, 6.053300722643523e-05;
+//calibrator.cc.gbias << -0.018979372470570893, -0.008406455866217388, 0.032127682705770155;
+//calibrator.cc.gyrocalibration << 1, 0, 0, 0, 1, 0, 0, 0, 1;
+//calibrator.cc.mbias << -1050.5900689003606, 2079.589621216993, -415.006661684211;
+//calibrator.cc.magncalibration << 0.0003328666144478833, 1.8162571976961047e-05, -1.3147113646113505e-06, -1.212294425842084e-06, -0.0003405946451754716, -3.4460830067161404e-06, -3.439426391511963e-06, 2.3845524170717895e-06, 0.0003430515107230797;
+
+
+  calibrator.setup();
+  filter.fc = MIMUFilterCoefficients{3,0,1,1};
   filter.setup();
 
   initCapsense();
